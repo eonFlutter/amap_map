@@ -126,7 +126,18 @@
         self.showsUserLocation = showUserLocation;
         if (showUserLocation) {
             self.userTrackingMode = MAUserTrackingModeNone;//强制设置为非追随模式，追随模式后续在demo中，使用自定义定位样式实现
-            if (locationStyleDict[@"circleFillColor"] != nil
+            
+            // 不要管上面的那行代码
+            BOOL showsHeadingIndicator = [locationStyleDict[@"showsHeadingIndicator"] boolValue];
+            if (showsHeadingIndicator) {
+                MAUserLocationRepresentation *locationRepresentation = [[MAUserLocationRepresentation alloc] init];
+                locationRepresentation.showsHeadingIndicator = YES;
+                [self updateUserLocationRepresentation:locationRepresentation];
+                self.showsUserLocation = YES;
+                self.userTrackingMode = MAUserTrackingModeFollowWithHeading;
+            }
+
+            else if (locationStyleDict[@"circleFillColor"] != nil
                 || locationStyleDict[@"circleStrokeColor"] != nil
                 || locationStyleDict[@"circleStrokeWidth"] != nil
                 || locationStyleDict[@"icon"] != nil) {//自定义样式有不为空的属性时，才启动自定义的样式设置

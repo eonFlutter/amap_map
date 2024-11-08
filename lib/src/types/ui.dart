@@ -114,6 +114,9 @@ class MyLocationStyleOptions {
   ///是否显示定位小蓝点
   bool enabled;
 
+  ///是否显示方向指示(ios有效)，默认为YES，设置为YES之后后面的颜色、icon无效
+  bool showsHeadingIndicator;
+
   ///精度圈填充色
   Color? circleFillColor;
 
@@ -128,6 +131,7 @@ class MyLocationStyleOptions {
 
   MyLocationStyleOptions(
     this.enabled, {
+    this.showsHeadingIndicator = true,
     this.circleFillColor,
     this.circleStrokeColor,
     this.circleStrokeWidth,
@@ -137,6 +141,7 @@ class MyLocationStyleOptions {
   MyLocationStyleOptions clone() {
     return MyLocationStyleOptions(
       enabled,
+      showsHeadingIndicator: showsHeadingIndicator,
       circleFillColor: circleFillColor,
       circleStrokeColor: circleStrokeColor,
       circleStrokeWidth: circleStrokeWidth,
@@ -148,9 +153,15 @@ class MyLocationStyleOptions {
     if (null == json) {
       return null;
     }
+    bool show = json['showsHeadingIndicator'] == null
+        ? false // 默认值为 false
+        : json['showsHeadingIndicator'] is bool
+        ? json['showsHeadingIndicator']
+        : false; // 如果类型不对，则使用默认值
     return MyLocationStyleOptions(
       json['enabled'] ?? false,
       circleFillColor: json['circleFillColor'],
+      showsHeadingIndicator: show,
       circleStrokeColor: json['circleStrokeColor'],
       circleStrokeWidth: json['circleStrokeWidth'],
       icon: json['icon'],
@@ -167,6 +178,7 @@ class MyLocationStyleOptions {
     }
 
     addIfPresent('enabled', enabled);
+    addIfPresent('showsHeadingIndicator', showsHeadingIndicator);
     addIfPresent('circleFillColor', circleFillColor?.value);
     addIfPresent('circleStrokeColor', circleStrokeColor?.value);
     addIfPresent('circleStrokeWidth', circleStrokeWidth);
@@ -181,6 +193,7 @@ class MyLocationStyleOptions {
     if (other is! MyLocationStyleOptions) return false;
     final MyLocationStyleOptions typedOther = other;
     return enabled == typedOther.enabled &&
+        showsHeadingIndicator == typedOther.showsHeadingIndicator &&
         circleFillColor == typedOther.circleFillColor &&
         circleStrokeColor == typedOther.circleStrokeColor &&
         icon == typedOther.icon;
@@ -190,6 +203,7 @@ class MyLocationStyleOptions {
   String toString() {
     return 'MyLocationOptionsStyle{'
         'enabled: $enabled,'
+        'showsHeadingIndicator: $showsHeadingIndicator,'
         'circleFillColor: $circleFillColor,'
         'circleStrokeColor: $circleStrokeColor,'
         'icon: $icon, }';
@@ -197,7 +211,7 @@ class MyLocationStyleOptions {
 
   @override
   int get hashCode =>
-      Object.hashAll([enabled, circleFillColor, circleStrokeColor, icon]);
+      Object.hashAll([enabled, showsHeadingIndicator, circleFillColor, circleStrokeColor, icon]);
 }
 
 ///地图自定义样式
