@@ -1,6 +1,5 @@
 name: amap_map
-description: Amap SDK Flutter plugin for integrating AMapSDK in iOS and Android applications.
-实际上这个项目是对 amap_map 插件进行二次开发。
+description: Amap SDK Flutter plugin for integrating AMapSDK in iOS and Android applications. 实际上这个项目是对 amap_map 插件进行二次开发。
 
 version: 1.0.0
 homepage: https://github.com/eonFlutter/amap_map

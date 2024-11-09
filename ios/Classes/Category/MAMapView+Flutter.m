@@ -63,6 +63,9 @@
         MAMapStatus *currentStatus = [self getMapStatus];
         currentStatus.centerCoordinate = position;
         [self setMapStatus:currentStatus animated:animated duration:duration];
+        
+        self.userTrackingMode = MAUserTrackingModeFollowWithHeading;
+        
     } else if ([operation isEqualToString:@"newLatLngBounds"] && cameraUpdate.count == 3) {//设置视图的显示范围和边界
 //        TODO: 这里没有使用参数duration
         MAMapRect boundRect = [AMapConvertUtil mapRectFromArray:cameraUpdate[1]];
