@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.flutter.view.FlutterMain;
 
@@ -212,7 +213,15 @@ public class ConvertUtil {
 
             final Object myLocationStyleData = data.get("myLocationStyle");
             if (null != myLocationStyleData) {
+
+                final Map<?, ?> map = toMap(myLocationStyleData);
+                final Object showsHeadingIndicator = map.get("showsHeadingIndicator");
+                if (null != showsHeadingIndicator) {
+                    sink.setShowsHeadingIndicator(toBoolean(showsHeadingIndicator));
+                }
+
                 sink.setMyLocationStyle(ConvertUtil.toMyLocationStyle(myLocationStyleData, density));
+
             }
 
             final Object screenAnchor = data.get("screenAnchor");

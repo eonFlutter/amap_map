@@ -24,6 +24,7 @@ public interface AMapOptionsSink extends UISettingsSink {
     public void setCustomMapStyleOptions(CustomMapStyleOptions customMapStyleOptions);
 
     public void setMyLocationStyle(MyLocationStyle myLocationStyle);
+    public void setShowsHeadingIndicator(boolean value);
 
     public void setScreenAnchor(float x, float y);
 

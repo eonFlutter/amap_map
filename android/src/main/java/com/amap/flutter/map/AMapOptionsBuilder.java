@@ -30,6 +30,8 @@ class AMapOptionsBuilder implements AMapOptionsSink, UISettingsSink {
     private CustomMapStyleOptions customMapStyleOptions;
     private MyLocationStyle myLocationStyle;
 
+    private boolean showsHeadingIndicator = true;
+
     private float minZoomLevel = 3;
     private float maxZoomLevel = 20;
     private LatLngBounds latLngBounds;
@@ -68,6 +70,7 @@ class AMapOptionsBuilder implements AMapOptionsSink, UISettingsSink {
             }
 
             if (null != myLocationStyle) {
+                aMapPlatformView.getMapController().setShowsHeadingIndicator(showsHeadingIndicator);
                 aMapPlatformView.getMapController().setMyLocationStyle(myLocationStyle);
             }
             if (anchorX >= 0
@@ -136,6 +139,11 @@ class AMapOptionsBuilder implements AMapOptionsSink, UISettingsSink {
     @Override
     public void setMyLocationStyle(MyLocationStyle myLocationStyle) {
         this.myLocationStyle = myLocationStyle;
+    }
+
+    @Override
+    public void setShowsHeadingIndicator(boolean value) {
+        this.showsHeadingIndicator = value;
     }
 
     @Override

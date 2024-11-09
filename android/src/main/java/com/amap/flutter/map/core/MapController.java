@@ -1,8 +1,10 @@
 package com.amap.flutter.map.core;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.location.Location;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -14,15 +16,18 @@ import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.CustomMapStyleOptions;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.LatLngBounds;
+import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.maps.model.Poi;
 import com.amap.flutter.map.MyMethodCallHandler;
 import com.amap.flutter.map.utils.Const;
 import com.amap.flutter.map.utils.ConvertUtil;
 import com.amap.flutter.map.utils.LogUtil;
+import com.amap.flutter.map.utils.SensorEventHelper;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
@@ -51,6 +56,11 @@ public class MapController
     private boolean mapLoaded = false;
     private boolean myLocationShowing = false;
 
+    private boolean showsHeadingIndicator = false; // 标记是否旋转
+    private SensorEventHelper mSensorHelper; // 第一步 定义传感器
+    private boolean mFirstFix = false; // 标记是否监听
+
+
     public MapController(MethodChannel methodChannel, TextureMapView mapView) {
         this.methodChannel = methodChannel;
         this.mapView = mapView;
@@ -62,6 +72,31 @@ public class MapController
         amap.addOnMapLongClickListener(this);
         amap.addOnMapClickListener(this);
         amap.addOnPOIClickListener(this);
+    }
+
+    public final void addSensorEventHelperListener() {
+        LogUtil.i(CLASS_NAME, "第二步 注册监听");
+        Context mContext = this.mapView.getContext();
+        mSensorHelper = new SensorEventHelper(mContext);
+        if (mSensorHelper != null) {
+            mSensorHelper.registerSensorListener();
+
+            amap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                    float bearing = cameraPosition.bearing;
+                    mSensorHelper.updateBearing(bearing);
+                    Log.d("MapRotation", "Rotation angle updated: " + bearing);
+                }
+
+                @Override
+                public void onCameraChangeFinish(CameraPosition cameraPosition) {
+                    float bearing = cameraPosition.bearing;
+                    mSensorHelper.updateBearing(bearing);
+                    Log.d("MapRotation", "Final rotation angle: " + bearing);
+                }
+            });
+        }
     }
 
     @Override
@@ -185,6 +220,15 @@ public class MapController
     }
 
     @Override
+    public void setShowsHeadingIndicator(boolean value) {
+        LogUtil.i(CLASS_NAME, String.format("第二步 2---------- %b", value));
+        showsHeadingIndicator = value;
+        if (showsHeadingIndicator) {
+            addSensorEventHelperListener();
+        }
+    }
+
+    @Override
     public void setScreenAnchor(float x, float y) {
         amap.setPointToCenter(Float.valueOf(mapView.getWidth() * x).intValue(), Float.valueOf(mapView.getHeight() * y).intValue());
     }
@@ -268,6 +312,16 @@ public class MapController
             arguments.put("location", ConvertUtil.location2Map(location));
             methodChannel.invokeMethod("location#changed", arguments);
             LogUtil.i(CLASS_NAME, "onMyLocationChange===>" + arguments);
+
+            if (!mFirstFix) {
+                List<Marker> markers = this.amap.getMapScreenMarkers();
+                if (markers != null && !markers.isEmpty()) {
+                    LogUtil.i(CLASS_NAME, "第三步 把定位标记和传感器绑定（传感器内部会处理旋转）");
+                    mFirstFix = true;
+                    Marker firstMarker = markers.get(0);
+                    mSensorHelper.setCurrentMarker(firstMarker);//定位图标旋转
+                }
+            }
         }
     }
 
@@ -386,6 +440,15 @@ public class MapController
     public void setLogoLeftMargin(int pixels) {
         if (null != amap) {
             amap.getUiSettings().setLogoLeftMargin(pixels);
+        }
+    }
+
+    public void unRegisterSensorListener() {
+        if (mSensorHelper != null) {
+            LogUtil.i(CLASS_NAME, "第四步 取消监听");
+            mSensorHelper.unRegisterSensorListener();
+            mSensorHelper.setCurrentMarker(null);
+            mSensorHelper = null;
         }
     }
 }

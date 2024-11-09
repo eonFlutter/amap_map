@@ -114,7 +114,7 @@ class MyLocationStyleOptions {
   ///是否显示定位小蓝点
   bool enabled;
 
-  ///是否显示方向指示(ios有效)，默认为YES，设置为YES之后后面的颜色、icon无效
+  ///是否显示方向指示，默认为YES，(ios端设置为YES之后，后面的颜色、icon无效)
   bool showsHeadingIndicator;
 
   ///精度圈填充色
