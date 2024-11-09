@@ -1,7 +1,5 @@
 # amap_map
 
-[![pub package](https://img.shields.io/pub/v/amap_map.svg)](https://pub.dev/packages/amap_map)
-
 基于[高德开放平台地图 SDK](https://lbs.amap.com/api/)的 flutter 插件
 
 |             | Android                    | iOS      |
@@ -268,5 +266,3 @@ class AMapController {
 ```
 
 google 官方说明地址：https://source.android.com/devices/tech/debug/tagged-pointers
-
-2. 原本本插件拓展设计的思路是把一些不常用的特性功能做成可插拔的 extension，昨天（2024/07/28）考虑了下，觉得有点过度设计了，包括轻量版 SDK 的接入适配，于是决定后续实现做些调整，尽量贴合 SDK API 实现功能。
