@@ -366,6 +366,10 @@ public class ConvertUtil {
         if (null != iconDta) {
             myLocationStyle.myLocationIcon(toBitmapDescriptor(iconDta));
         }
+
+//        这个是打开之后，之前的旋转可以屏蔽了。但是这个是3D地图
+//        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE);
+
         return myLocationStyle;
     }
 
